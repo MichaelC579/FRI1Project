@@ -81,13 +81,23 @@
     });
   </script>
   <p><br /><b>&nbsp;&nbsp;Your Code:</b></p>
-  <p id="codeDisplay"></p>
-  <button onclick="addMoveF()">Forward</button>
-  <button onclick="addMoveB()">Back</button>
-  <br />
+  <style>
+.boxed {
+    background-color: Lavender;
+    padding: 10px;
+  border: 1px solid green ;
+}
+</style>
+  <div class="boxed"><p id="codeDisplay"></p></div>
+  <br>
+  
   <button onclick="prevLine()">Previous Line</button>
   <button onclick="nextLine()">Next Line</button>
-  
+  <br>
+  <br>
+  <p>Commands:</p>
+  <button onclick="addMoveF()">Forward</button>
+  <button onclick="addMoveB()">Back</button>
 
     <script>
     let curLine = 0;
