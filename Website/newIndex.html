@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  
+<head>
+  <!-- Include Bootstrap for styling -->
+  <link rel="stylesheet" href=
+"https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+  
+  <style>
+    .qr-code {
+      max-width: 200px;
+      margin: 10px;
+    }
+  </style>
+  
+  <title>Robot Code to QR Code Generator</title>
+</head>
+  
+<body>
+  <h1>&nbsp;&nbsp;BWIBot Coding Space</h1>
+  <div class="container-fluid">
+    <div class="text-center">
+  
+      <!-- Get a Placeholder image initially,
+       this will change according to the
+       data entered later -->
+     <img src=
+"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAElBMVEX8/vz///8pKikAAAAtLS2Oj47hKWeDAAABEElEQVR4nO3PBxEDMRAAMZcLf8p5GuuRGGjdO+dhc9f97afNmr1ets86hm2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2Gfd9w9ttm3Tkvm/sHIDIKk6RLvD4AAAAASUVORK5CYII="
+        class="qr-code img-thumbnail img-responsive" />
+    </div>
+    <label class="text-center"
+          for="content">
+          Click here to transform your program into a QR code:
+        </label>
+    <div class="form-horizontal">
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+  
+          <!-- Button to generate QR Code for
+           the entered data -->
+          <button type="button" class=
+            "btn btn-default" id="generate">
+            Generate QR Code
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src=
+    "https://code.jquery.com/jquery-3.5.1.js">
+  </script>
+  
+  <script>
+    // Function to HTML encode the text
+    // This creates a new hidden element,
+    // inserts the given text into it 
+    // and outputs it out as HTML
+    function htmlEncode(value) {
+      return $('<div/>').text(value)
+        .html();
+    }
+  
+    $(function () {
+  
+      // Specify an onclick function
+      // for the generate button
+      $('#generate').click(function () {
+  
+        // Generate the link that would be
+        // used to generate the QR Code
+        // with the given data 
+        let finalURL =
+'https://chart.googleapis.com/chart?cht=qr&chl=' +
+          htmlEncode(code) +
+          '&chs=160x160&chld=L|0'
+  
+        // Replace the src of the image with
+        // the QR code image
+        $('.qr-code').attr('src', finalURL);
+      });
+    });
+  </script>
+  <p><br /><b>&nbsp;&nbsp;Your Code:</b></p>
+  <p id="codeDisplay"></p>
+  <button onclick="addMoveF()">Forward</button>
+  <button onclick="addMoveB()">Back</button>
+  <br />
+  <button onclick="prevLine()">Previous Line</button>
+  <button onclick="nextLine()">Next Line</button>
+  
+
+    <script>
+    let curLine = 0;
+    const display = ["_____"]; // the displayed lines of code
+    const code = [""]; // the compressed lines of code
+    
+    function addMoveF() {
+        display.splice(curLine, 0, "Move forward<br />");
+        code.splice(curLine, 0, "f");
+        curLine++;
+        printLines();  
+    }
+    
+    function addMoveB() {
+        display.splice(curLine, 0, "Move backward<br />");
+        code.splice(curLine, 0, "b");
+        curLine++;
+        printLines();  
+    }
+    
+    function nextLine(){
+        if(curLine < display.length - 1){
+            curLine++;
+            printLines();
+        }
+    }
+    
+    function prevLine(){
+        if(curLine > 0){
+            curLine--;
+            printLines();
+        }
+    }
+    
+    function printLines(){
+        document.getElementById("codeDisplay").innerHTML = "";
+        for(let i = 0; i < display.length; i++){
+            if(i == curLine){
+                // indicates the current line
+                document.getElementById("codeDisplay").innerHTML += "> ";
+            }
+            document.getElementById("codeDisplay").innerHTML += (i+1) + ": " + display[i];
+        }
+    }
+    printLines(); // prints the initial blank line 1
+    </script>
+    <p><br />&nbsp;&nbsp;Welcome to the BWIBot Coding Space!</p>
+  <p>&nbsp;&nbsp;Here you can write simple programs for the BWIBot in three easy steps:</p>
+  <p>&nbsp;&nbsp;1. Type your program by clicking the various command buttons."</p>
+  <p>&nbsp;&nbsp;2. Hit "Generate QR Code" to turn your program into a QR Code.</p>
+  <p>&nbsp;&nbsp;3. Hold your QR code up to BWIBot camera and watch your program run!</p>
+</body>
+  
+</html>
