@@ -28,13 +28,10 @@
 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAElBMVEX8/vz///8pKikAAAAtLS2Oj47hKWeDAAABEElEQVR4nO3PBxEDMRAAMZcLf8p5GuuRGGjdO+dhc9f97afNmr1ets86hm2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2GfYZ9hn2Gfd9w9ttm3Tkvm/sHIDIKk6RLvD4AAAAASUVORK5CYII="
         class="qr-code img-thumbnail img-responsive" />
     </div>
-    <label class="text-center"
-          for="content">
+    <div class="text-center">
           Click here to transform your program into a QR code:
-        </label>
     <div class="form-horizontal">
       <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
   
           <!-- Button to generate QR Code for
            the entered data -->
@@ -42,9 +39,9 @@
             "btn btn-default" id="generate">
             Generate QR Code
           </button>
-        </div>
       </div>
     </div>
+  </div>
   </div>
   <script src=
     "https://code.jquery.com/jquery-3.5.1.js">
@@ -80,6 +77,21 @@
       });
     });
   </script>
+  <br>
+  <div class="text-center">
+  <button onclick="prevLine()">Previous Line</button>
+  <button onclick="nextLine()">Next Line</button>
+  <label for="fname">&nbsp;&nbsp;Jump to line:</label>
+  <input type="number" id="jumpline" name="fname" style="width: 50px;">
+  <button onclick="jumpLine($('#jumpline').val())">Go</button>
+  <br>
+  <button onclick="deleteLine()">Delete</button>
+  <button onclick="clearLines()">Clear</button>
+  <br>
+  <p>Commands:</p>
+  <button onclick="addMoveF()">Forward</button>
+  <button onclick="addMoveB()">Back</button>
+  </div>
   <p><br /><b>&nbsp;&nbsp;Your Code:</b></p>
   <style>
 .boxed {
@@ -89,18 +101,6 @@
 }
 </style>
   <div class="boxed"><p id="codeDisplay"></p></div>
-  <br>
-  
-  <button onclick="prevLine()">Previous Line</button>
-  <button onclick="nextLine()">Next Line</button>
-  <label for="fname">&nbsp;&nbsp;Jump to line:</label>
-  <input type="number" id="jumpline" name="fname" style="width: 50px;">
-  <button onclick="jumpLine($('#jumpline').val())">Go</button>
-  <br>
-  <br>
-  <p>Commands:</p>
-  <button onclick="addMoveF()">Forward</button>
-  <button onclick="addMoveB()">Back</button>
 
     <script>
     let curLine = 0;
@@ -123,37 +123,44 @@
     
     function nextLine(){
         if(curLine < display.length - 1){
-            display.splice(curLine, 1);
-            code.splice(curLine, 1);
             curLine++;
-            display.splice(curLine, 0, "__________");
-            code.splice(curLine, 0, "_");
-            printLines();
         }
+        printLines();
     }
     
     function prevLine(){
         if(curLine > 0){
-            display.splice(curLine, 1);
-            code.splice(curLine, 1);
             curLine--;
-            display.splice(curLine, 0, "__________");
-            code.splice(curLine, 0, "_");
-            printLines();
         }
+        printLines();
     }
+    
     function jumpLine(line){
         line = line - 1; // array indices are 1 less than line #s
         if(line >= 0 && line < display.length){
-            display.splice(curLine, 1);
-            code.splice(curLine, 1);
             curLine = line;
-            display.splice(curLine, 0, "__________");
-            code.splice(curLine, 0, "_");
             printLines();
         } else {
             alert("Error: invalid line number " + (line + 1));
         }
+    }
+    
+    function deleteLine() {
+      if(code[curLine] != "_") {
+          display.splice(curLine, 1);
+          code.splice(curLine, 1);
+          if(curLine != 0) {
+          	curLine --;
+          }
+          printLines();
+        }
+    }
+    
+    function clearLines() {
+      curLine = 0;
+      display.splice(0, display.length, "__________"); 
+      code.splice(0, code.length, "_");
+      printLines();
     }
     // An empty line of underscores represents the cursor. This should be 
     // excluded either from generating the QR code or disregarded when reading in 
@@ -162,7 +169,12 @@
     function printLines(){
         document.getElementById("codeDisplay").innerHTML = "";
         for(let i = 0; i < display.length; i++){
+        if(curLine != i) {
             document.getElementById("codeDisplay").innerHTML += (i+1) + ": " + display[i] + "<br>";
+        }
+        else {
+        	document.getElementById("codeDisplay").innerHTML += (i+1) + ": " + "<u>" + display[i] + "<u><br>";
+        }
         }
     }
     printLines(); // prints the initial blank line 1
@@ -175,3 +187,4 @@
 </body>
   
 </html>
+
