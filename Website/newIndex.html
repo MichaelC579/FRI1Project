@@ -108,6 +108,22 @@
   </div>
 
     <script>
+    window.addEventListener("keydown", function(e) {
+    if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+        e.preventDefault();
+    }
+	}, false);
+    
+    $(document).on("keyup", function (e) {
+    	if (e.key != undefined && e.key == "ArrowDown") {
+      		nextLine();
+        }
+        else if(e.key != undefined && e.key == "ArrowUp") {
+        	prevLine();      }
+        else if(e.key != undefined && e.key == "Backspace") {
+        	deleteLine();
+        }
+    });
     let curLine = 0;
     const display = ["__________"]; // the displayed lines of code
     const code = ["_"]; // the compressed lines of code
