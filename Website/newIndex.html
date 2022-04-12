@@ -86,25 +86,45 @@
   border: 1px solid green ;
 }
 .combox {
-    background-color: Gray;
-    
-  border: 1px coral;
+    background-color: FloralWhite;
+    padding: 10px;
+  border: 1px solid green;
 }
 </style>
   <div class="codebox" id="codeDisplay" style="float:left; width:50%; height:700px; border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">></div>
   <div class="combox" style="float:left; width:50%; height:700px; border:1px">
   <button onclick="prevLine()">Previous Line</button>
+  &nbsp;
   <button onclick="nextLine()">Next Line</button>
   <label for="fname">&nbsp;&nbsp;Jump to line:</label>
   <input type="number" id="jumpline" name="fname" style="width: 50px;">
   <button onclick="jumpLine($('#jumpline').val())">Go</button>
   <br>
   <button onclick="deleteLine()">Delete</button>
+  &nbsp;
   <button onclick="clearLines()">Clear</button>
+  <br><br>
+  <p><b>Commands:</b></p>
+  
+  <p style="display:inline">Move forward </p>
+  <input type="number" id="movforx" name="fname" style="width: 50px; height:22px;">
+  <p style="display:inline">feet:</p>
+  <button onclick="addMoveF($('#movforx').val())">Add</button>
   <br>
-  <p>Commands:</p>
-  <button onclick="addMoveF()">Forward</button>
-  <button onclick="addMoveB()">Back</button>
+  
+  <p style="display:inline">Move backward </p>
+  <input type="number" id="movbacx" name="fname" style="width: 50px; height:22px;">
+  <p style="display:inline">feet:</p>
+  <button onclick="addMoveB($('#movbacx').val())">Add</button>
+  <br>
+  
+  <p style="display:inline">Turn left: </p>
+  <button onclick="addTurnL()">Add</button>
+  <br>
+  
+  <p style="display:inline">Turn right: </p>
+  <button onclick="addTurnR()">Add</button>
+  <br>
   </div>
 
     <script>
@@ -128,18 +148,31 @@
     const display = ["__________"]; // the displayed lines of code
     const code = ["_"]; // the compressed lines of code
     
-    function addMoveF() {
-        display.splice(curLine, 0, "Move forward");
-        code.splice(curLine, 0, "f");
+    function addMoveF(feet) {
+        display.splice(curLine, 0, "Move forward "+feet+" feet");
+        code.splice(curLine, 0, "f"+feet);
         curLine++;
         printLines();  
     }
     
-    function addMoveB() {
-        display.splice(curLine, 0, "Move backward");
-        code.splice(curLine, 0, "b");
+    function addMoveB(feet) {
+        display.splice(curLine, 0, "Move backward "+feet+" feet");
+        code.splice(curLine, 0, "b"+feet);
         curLine++;
         printLines();  
+    }
+    function addTurnR() {
+        display.splice(curLine, 0, "Turn Right");
+        code.splice(curLine, 0, "r");
+        curLine++;
+        printLines();
+    }
+   
+    function addTurnL() {
+        display.splice(curLine, 0, "Turn Left");
+        code.splice(curLine, 0, "l");
+        curLine++;
+        printLines();
     }
     
     function nextLine(){
@@ -206,6 +239,4 @@
   <p>&nbsp;&nbsp;2. Hit "Generate QR Code" to turn your program into a QR Code.</p>
   <p>&nbsp;&nbsp;3. Hold your QR code up to BWIBot camera and watch your program run!</p>
 </body>
-  
 </html>
-
