@@ -78,7 +78,21 @@
     });
   </script>
   <br>
-  <div class="text-center">
+  <p><br /><b>&nbsp;&nbsp;Your Code:</b></p>
+  <style>
+.codebox {
+    background-color: Lavender;
+    padding: 10px;
+  border: 1px solid green ;
+}
+.combox {
+    background-color: Gray;
+    
+  border: 1px coral;
+}
+</style>
+  <div class="codebox" id="codeDisplay" style="float:left; width:50%; height:700px; border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">></div>
+  <div class="combox" style="float:left; width:50%; height:700px; border:1px">
   <button onclick="prevLine()">Previous Line</button>
   <button onclick="nextLine()">Next Line</button>
   <label for="fname">&nbsp;&nbsp;Jump to line:</label>
@@ -92,15 +106,6 @@
   <button onclick="addMoveF()">Forward</button>
   <button onclick="addMoveB()">Back</button>
   </div>
-  <p><br /><b>&nbsp;&nbsp;Your Code:</b></p>
-  <style>
-.boxed {
-    background-color: Lavender;
-    padding: 10px;
-  border: 1px solid green ;
-}
-</style>
-  <div class="boxed"><p id="codeDisplay"></p></div>
 
     <script>
     let curLine = 0;
