@@ -78,21 +78,41 @@
     });
   </script>
   <br>
-  <p><br /><b>&nbsp;&nbsp;Your Code:</b></p>
+  <p style="font-size: 18px;"><br /><b>&nbsp;&nbsp;Your Code:</b></p>
   <style>
-.codebox {
-    background-color: Lavender;
-    padding: 10px;
-  border: 1px solid green ;
-}
-.combox {
-    background-color: FloralWhite;
-    padding: 10px;
-  border: 1px solid green;
-}
-</style>
-  <div class="codebox" id="codeDisplay" style="float:left; width:50%; height:700px; border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">></div>
-  <div class="combox" style="float:left; width:50%; height:700px; border:1px">
+    .codebox {
+        background-color: Lavender;
+        padding: 10px;
+        border: 2px solid green ;
+    }
+    .combox {
+        background-color: FloralWhite;
+        padding: 10px;
+        border: 2px solid green;
+    }
+    .button2 {
+      background-color: #4CAF50; /* Green */
+      border: 1px solid black;
+      border-radius: 6px;
+      color: white;
+      padding: 1px 6px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      margin: 4px 2px;
+      cursor: pointer;
+      transition-duration: 0.3s;
+    }
+    .button2:hover {
+      box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+    }
+    .button2:active {
+      background-color: #006400;
+    }
+  </style>
+  <div class="codebox" id="codeDisplay" style="float:left; width:50%; height:700px; font:16px/26px Verdana, Courier New, Monospace; overflow:auto;">></div>
+  <div class="combox" style="float:left; width:50%; height:700px;">
   <button onclick="prevLine()">Previous Line</button>
   &nbsp;
   <button onclick="nextLine()">Next Line</button>
@@ -104,30 +124,32 @@
   &nbsp;
   <button onclick="clearLines()">Clear</button>
   <br><br>
+  
   <p><b>Commands:</b></p>
   
   <p style="display:inline">Move forward </p>
   <input type="number" id="movforx" name="fname" style="width: 50px; height:22px;">
   <p style="display:inline">feet:</p>
-  <button onclick="addMoveF($('#movforx').val())">Add</button>
+  <button class="button2" onclick="addMoveF($('#movforx').val())">Add</button>
   <br>
   
   <p style="display:inline">Move backward </p>
   <input type="number" id="movbacx" name="fname" style="width: 50px; height:22px;">
   <p style="display:inline">feet:</p>
-  <button onclick="addMoveB($('#movbacx').val())">Add</button>
+  <button class="button2" onclick="addMoveB($('#movbacx').val())">Add</button>
   <br>
   
   <p style="display:inline">Turn left: </p>
-  <button onclick="addTurnL()">Add</button>
+  <button class="button2" onclick="addTurnL()">Add</button>
   <br>
   
   <p style="display:inline">Turn right: </p>
-  <button onclick="addTurnR()">Add</button>
+  <button class="button2" onclick="addTurnR()">Add</button>
   <br>
   </div>
 
     <script>
+    let feetLimit = 100; // the max feet the robot can travel in 1 command
     window.addEventListener("keydown", function(e) {
     if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
         e.preventDefault();
@@ -148,18 +170,28 @@
     const display = ["__________"]; // the displayed lines of code
     const code = ["_"]; // the compressed lines of code
     
+    // adding commands
+    
     function addMoveF(feet) {
-        display.splice(curLine, 0, "Move forward "+feet+" feet");
-        code.splice(curLine, 0, "f"+feet);
-        curLine++;
-        printLines();  
+        if(feet > 0 && feet < feetLimit){
+            display.splice(curLine, 0, "Move forward "+feet+" feet");
+            code.splice(curLine, 0, "f"+feet);
+            curLine++;
+            printLines(); 
+        } else {
+            alert("Error: distance in feet must be between 0 and " + feetLimit);
+        }
     }
     
     function addMoveB(feet) {
-        display.splice(curLine, 0, "Move backward "+feet+" feet");
-        code.splice(curLine, 0, "b"+feet);
-        curLine++;
-        printLines();  
+        if(feet > 0 && feet < feetLimit){
+            display.splice(curLine, 0, "Move backward "+feet+" feet");
+            code.splice(curLine, 0, "b"+feet);
+            curLine++;
+            printLines(); 
+        } else {
+            alert("Error: distance in feet must be between 0 and " + feetLimit);
+        }
     }
     function addTurnR() {
         display.splice(curLine, 0, "Turn Right");
@@ -174,6 +206,8 @@
         curLine++;
         printLines();
     }
+    
+    // other tools
     
     function nextLine(){
         if(curLine < display.length - 1){
@@ -221,19 +255,25 @@
     // the QR code.
     
     function printLines(){
-        document.getElementById("codeDisplay").innerHTML = "";
+        var box = document.getElementById("codeDisplay");
+        box.innerHTML = "";
         for(let i = 0; i < display.length; i++){
-        if(curLine != i) {
-            document.getElementById("codeDisplay").innerHTML += (i+1) + ": " + display[i] + "<br>";
+            if(curLine != i) {
+                box.innerHTML += (i+1) + ": " + display[i] + "<br>";
+            }
+            else {
+            	box.innerHTML += (i+1) + ": " + "<u>" + display[i] + "<u><br>";
+            }
         }
-        else {
-        	document.getElementById("codeDisplay").innerHTML += (i+1) + ": " + "<u>" + display[i] + "<u><br>";
-        }
+        if(curLine == display.length - 1){
+            // if line added at end, scroll down to show it
+            box.scrollTop = box.scrollHeight;
         }
     }
     printLines(); // prints the initial blank line 1
     </script>
-    <p><br />&nbsp;&nbsp;Welcome to the BWIBot Coding Space!</p>
+    <br><br>
+    <p>&nbsp;&nbsp;Welcome to the BWIBot Coding Space!</p>
   <p>&nbsp;&nbsp;Here you can write simple programs for the BWIBot in three easy steps:</p>
   <p>&nbsp;&nbsp;1. Type your program by clicking the various command buttons."</p>
   <p>&nbsp;&nbsp;2. Hit "Generate QR Code" to turn your program into a QR Code.</p>
