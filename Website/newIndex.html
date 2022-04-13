@@ -111,8 +111,9 @@
       background-color: #006400;
     }
   </style>
-  <div class="codebox" id="codeDisplay" style="float:left; width:50%; height:700px; font:16px/26px Verdana, Courier New, Monospace; overflow:auto;">></div>
+  <div class="codebox" id="codeDisplay" style="float:left; width:50%; height:700px; font:16px/26px Consolas, Courier New, Monospace; overflow:auto;">></div>
   <div class="combox" style="float:left; width:50%; height:700px;">
+  
   <button onclick="prevLine()">Previous Line</button>
   &nbsp;
   <button onclick="nextLine()">Next Line</button>
@@ -120,7 +121,7 @@
   <input type="number" id="jumpline" name="fname" style="width: 50px;">
   <button onclick="jumpLine($('#jumpline').val())">Go</button>
   <br>
-  <button onclick="deleteLine()">Delete</button>
+  <button onclick="deleteLine()">Delete Current Line</button>
   &nbsp;
   <button onclick="clearLines()">Clear</button>
   <br><br>
@@ -128,13 +129,17 @@
   <p><b>Commands:</b></p>
   
   <p style="display:inline">Move forward </p>
-  <input type="number" id="movforx" name="fname" style="width: 50px; height:22px;">
+  <input type="number" id="movforx" name="fname" value="1" style="width: 50px; height:22px;">
   <p style="display:inline">feet:</p>
   <button class="button2" onclick="addMoveF($('#movforx').val())">Add</button>
   <br>
   
+  <p style="display:inline">Move forward until path blocked </p>
+  <button class="button2" onclick="addMoveFB()">Add</button>
+  <br>
+  
   <p style="display:inline">Move backward </p>
-  <input type="number" id="movbacx" name="fname" style="width: 50px; height:22px;">
+  <input type="number" id="movbacx" name="fname" value="1" style="width: 50px; height:22px;">
   <p style="display:inline">feet:</p>
   <button class="button2" onclick="addMoveB($('#movbacx').val())">Add</button>
   <br>
@@ -146,10 +151,28 @@
   <p style="display:inline">Turn right: </p>
   <button class="button2" onclick="addTurnR()">Add</button>
   <br>
+  
+  <p style="display:inline">Wait </p>
+  <input type="number" id="waitx" name="fname" value="1" style="width: 50px; height:22px;">
+  <p style="display:inline">seconds:</p>
+  <button class="button2" onclick="addWait($('#waitx').val())">Add</button>
+  <br>
+  
+  <p><b>Control Commands:</b></p>
+  
+  <p style="display:inline">Repeat </p>
+  <input type="number" id="repx" name="fname" value="1" style="width: 50px; height:22px;">
+  <p style="display:inline">times{}:</p>
+  <button class="button2" onclick="addRepeatTimes($('#repx').val())">Add</button>
+  <br>
+  
   </div>
 
     <script>
     let feetLimit = 100; // the max feet the robot can travel in 1 command
+    let secLimit = 300;
+    let repLimit = 1000;
+    
     window.addEventListener("keydown", function(e) {
     if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
         e.preventDefault();
@@ -183,6 +206,13 @@
         }
     }
     
+    function addMoveFB() {
+        display.splice(curLine, 0, "Move forward until path blocked");
+        code.splice(curLine, 0, "fb");
+        curLine++;
+        printLines();
+    }
+    
     function addMoveB(feet) {
         if(feet > 0 && feet < feetLimit){
             display.splice(curLine, 0, "Move backward "+feet+" feet");
@@ -207,7 +237,35 @@
         printLines();
     }
     
-    // other tools
+    function addWait(seconds){
+        if(seconds > 0 && seconds < secLimit){
+            display.splice(curLine, 0, "Wait "+seconds+" seconds");
+            code.splice(curLine, 0, "w"+seconds);
+            curLine++;
+            printLines(); 
+        } else {
+            alert("Error: waiting time in seconds must be between 0 and " + secLimit);
+        }
+    }
+    
+    // Control Commands
+    
+    function addRepeatTimes(times){
+        if(times > -1 && times < repLimit){
+            display.splice(curLine, 0, "Repeat "+times+" times {"); // block start
+            code.splice(curLine, 0, "p"+times);
+            curLine++;
+            display.splice(curLine, 0, "__________"); // empty line
+            code.splice(curLine, 0, " ");
+            display.splice(curLine + 1, 0, "}"); // block end
+            code.splice(curLine + 1, 0, "}");
+            printLines(); 
+        } else {
+            alert("Error: number of repetitions must be between 0 and " + repLimit);
+        }
+    }
+    
+    // other tools for code editor navigation
     
     function nextLine(){
         if(curLine < display.length - 1){
@@ -258,6 +316,14 @@
         var box = document.getElementById("codeDisplay");
         box.innerHTML = "";
         for(let i = 0; i < display.length; i++){
+            // add spaces so that line #s with different digit lengths align
+            if((i+1) < 10){
+                box.innerHTML += "&nbsp;&nbsp;";
+            } else if((i+1) < 100){
+                box.innerHTML += "&nbsp;";
+            }
+            
+            // print the line number and command
             if(curLine != i) {
                 box.innerHTML += (i+1) + ": " + display[i] + "<br>";
             }
