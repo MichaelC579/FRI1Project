@@ -58,17 +58,21 @@
     }
   
     $(function () {
-  
       // Specify an onclick function
       // for the generate button
       $('#generate').click(function () {
-  
+        const output = [];
+        for(let i = 0; i < code.length; i++) {
+            if(code[i] != " " && code[i] != "_") {
+                output.push(code[i]);
+            }
+        }
         // Generate the link that would be
         // used to generate the QR Code
         // with the given data 
         let finalURL =
 'https://chart.googleapis.com/chart?cht=qr&chl=' +
-          htmlEncode(code) +
+          htmlEncode(output) +
           '&chs=160x160&chld=L|0'
   
         // Replace the src of the image with
@@ -115,7 +119,7 @@
       color: black;
     }
   </style>
-  <div class="codebox" id="codeDisplay" style="float:left; width:50%; height:700px; font:16px/26px Consolas, Courier New, Monospace; overflow:auto;">></div>
+  <div class="codebox" id="codeDisplay" style="float:left; width:50%; height:700px; font:16px/26px Consolas, Lucida Console, Monospace; overflow:auto;">></div>
   <div class="combox" style="float:left; width:50%; height:700px;">
   
   <button onclick="prevLine()">Previous Line</button>
@@ -166,9 +170,31 @@
   
   <p style="display:inline">Repeat </p>
   <input type="number" id="repx" name="fname" value="1" style="width: 50px; height:22px;">
-  <p style="display:inline">times{}:</p>
+  <p style="display:inline">times { }:</p>
   <button class="button2" onclick="addRepeatTimes($('#repx').val())">Add</button>
   <br>
+  
+  <p style="display:inline">Repeat while </p>
+  <select name="bools" id="rcondition">
+    <option value="1">path blocked</option>
+    <option value="2">path not blocked </option>
+    <option value="3">thing1</option>
+  </select>
+  <p style="display:inline">{ }:</p>
+  <button class="button2" onclick="addRepeatW()">Add</button>
+  <br>
+  
+  <p style="display:inline">If </p>
+  <select name="bools" id="icondition">
+    <option value="1">path blocked</option>
+    <option value="2">thing</option>
+    <option value="3">thing2</option>
+  </select>
+  <p style="display:inline">{ }:</p>
+  <button class="button2" onclick="addIf()">Add</button>
+  
+  
+  
   
   </div>
 
@@ -267,6 +293,45 @@
         } else {
             alert("Error: number of repetitions must be between 0 and " + repLimit);
         }
+    }
+    
+    function addRepeatW(){
+        var cond1 = document.getElementById("rcondition").value;
+        if(cond1 == 1){
+            // collision
+            display.splice(curLine, 0, "Repeat while (path blocked) {"); // block start
+            
+        } else if (cond1 == 2) {
+            display.splice(curLine, 0, "Repeat while (path not blocked) {"); // block start
+        } 
+        else if(cond1 == 3){
+            display.splice(curLine, 0, "Repeat while (some other condition) {"); // block start
+        }
+        code.splice(curLine, 0, "pw"+cond1);
+        curLine++;
+        display.splice(curLine, 0, "__________"); // empty line
+        code.splice(curLine, 0, " ");
+        display.splice(curLine + 1, 0, "}"); // block end
+        code.splice(curLine + 1, 0, "}");
+        printLines();
+    }
+    
+    function addIf(){
+        var cond1 = document.getElementById("icondition").value;
+        if(cond1 == 1){
+            // collision
+            display.splice(curLine, 0, "If (path blocked) {"); // block start
+            
+        } else if(cond1 == 2 || cond1 == 3){
+            display.splice(curLine, 0, "If (some other condition) {"); // block start
+        }
+        code.splice(curLine, 0, "i"+cond1);
+        curLine++;
+        display.splice(curLine, 0, "__________"); // empty line
+        code.splice(curLine, 0, " ");
+        display.splice(curLine + 1, 0, "}"); // block end
+        code.splice(curLine + 1, 0, "}");
+        printLines(); 
     }
     
     // other tools for code editor navigation
