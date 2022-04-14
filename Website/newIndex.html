@@ -110,6 +110,10 @@
     .button2:active {
       background-color: #006400;
     }
+    mark {
+      background-color: Azure;
+      color: black;
+    }
   </style>
   <div class="codebox" id="codeDisplay" style="float:left; width:50%; height:700px; font:16px/26px Consolas, Courier New, Monospace; overflow:auto;">></div>
   <div class="combox" style="float:left; width:50%; height:700px;">
@@ -157,7 +161,7 @@
   <p style="display:inline">seconds:</p>
   <button class="button2" onclick="addWait($('#waitx').val())">Add</button>
   <br>
-  
+  <br>
   <p><b>Control Commands:</b></p>
   
   <p style="display:inline">Repeat </p>
@@ -292,7 +296,50 @@
     }
     
     function deleteLine() {
-      if(code[curLine] != "_") {
+      if(code[curLine].charAt(0) == "p" || code[curLine].charAt(0) == "i"){
+          // delete code block
+          let brCount = 1;
+          if(confirm("Do you want to delete the entire corresponding block of code?")){
+              // delete all lines until the correct closing brace found
+              display.splice(curLine, 1);
+              code.splice(curLine, 1);
+              while(brCount != 0){
+                  if(code[curLine] == "}"){
+                      brCount--;
+                  } else if(code[curLine].charAt(0) == "p" || code[curLine].charAt(0) == "i"){
+                      brCount++;
+                  }
+                  display.splice(curLine, 1);
+                  code.splice(curLine, 1);
+              }
+              printLines();
+          }
+      } else if(code[curLine] == "}"){
+          // delete code block
+          let brCount = 1;
+          if(confirm("Do you want to delete the entire corresponding block of code?")){
+              // delete all lines until the correct opening brace found
+              display.splice(curLine, 1);
+              code.splice(curLine, 1);
+              if(curLine != 0) {
+              	curLine--;
+              }
+              while(brCount != 0){
+                  if(code[curLine] == "}"){
+                      brCount++;
+                  } else if(code[curLine].charAt(0) == "p" || code[curLine].charAt(0) == "i"){
+                      brCount--;
+                  }
+                  display.splice(curLine, 1);
+                  code.splice(curLine, 1);
+                  if(curLine != 0) {
+                  	curLine--;
+                  }
+              }
+              printLines();
+          }
+      } else if(code[curLine] != "_") {
+          // delete regular lines
           display.splice(curLine, 1);
           code.splice(curLine, 1);
           if(curLine != 0) {
@@ -314,6 +361,8 @@
     
     function printLines(){
         var box = document.getElementById("codeDisplay");
+        let indent = 0; // level of indent for code blocks
+        
         box.innerHTML = "";
         for(let i = 0; i < display.length; i++){
             // add spaces so that line #s with different digit lengths align
@@ -323,12 +372,26 @@
                 box.innerHTML += "&nbsp;";
             }
             
+            box.innerHTML += (i+1) + ": "; // print line numbers
+            
+            if(code[i] == "}"){
+                indent--;
+            }
+            
+            for(let indentInd = 0; indentInd < indent; indentInd++){
+                box.innerHTML += "&nbsp;&nbsp;"; // print indents
+            }
+            
             // print the line number and command
             if(curLine != i) {
-                box.innerHTML += (i+1) + ": " + display[i] + "<br>";
+                box.innerHTML += display[i] + "<br>";
             }
             else {
-            	box.innerHTML += (i+1) + ": " + "<u>" + display[i] + "<u><br>";
+            	box.innerHTML += "<mark>" + display[i] + "</mark><br>";
+            }
+            
+            if(code[i].charAt(0) == "p" || code[i].charAt(0) == "i"){
+                indent++;
             }
         }
         if(curLine == display.length - 1){
