@@ -45,24 +45,19 @@ void endBracketsToLoopGotos(vector<string> *instructions, vector<char> *firstLet
 
 int main()
 {
-    string inputString = "m1,p2,f1,p7,f44,},i1,w3,l2,},},k,k,f";
+    string inputString = "m1,p2,f1,p7,f44,},i1,w3,},},k,f2";
     //                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
     vector<string> instructions = splitInstructions(inputString);
     vector<char> firstLetters;
     stack<int> loopReps;
-    for(int i = 0; i < instructions.size(); i++)
+    for(int i = 0; i < instructions.size(); i++){
         firstLetters.push_back(instructions[i].at(0));
-    
+    }
     endBracketsToLoopGotos(&instructions, &firstLetters);
+    
     int index = 0;  // index of current instruction being processed
     
-    for(int i = 0; i < instructions.size(); i++){
-        cout << "ins" << instructions[i] << endl;
-    }
-    
     while(index < instructions.size()){
-        cout << "instructions" << instructions[index] << endl;
-        cout << "index" << index << endl;
         switch(firstLetters[index]){
             case 'f':
                 cout << "Moving forward " << instructions[index].substr(1) << " feet" << endl;
@@ -93,6 +88,7 @@ int main()
                 int curReps = stoi(instructions[index].substr(1));
                 if(curReps == 0){
                     instructions[index] = "p" + to_string(loopReps.top());
+                    firstLetters[index] = 'p';
                     loopReps.pop();
                     index = indexLastBracket(index, firstLetters); // will increment beyond index of last bracket later
                 } else {
@@ -118,6 +114,7 @@ int main()
                 cout << "Waiting " << instructions[index].substr(1) << " seconds" << endl;
                 break;
             case 's':
+                cout << "Saying something" << endl;
                 break;
             case 'g':
                 // goto instruction, jump to specific command
