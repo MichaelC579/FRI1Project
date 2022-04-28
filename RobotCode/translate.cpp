@@ -32,21 +32,43 @@ int indexLastBracket(int start, vector<char> firstLetters) {
     return start;
 }
 
+// converts the ending brackets of loops to (goto start of loop)
+void endBracketsToLoopGotos(vector<string> *instructions, vector<char> *firstLetters){
+    for(int i = 0; i < instructions->size(); i++){
+        if((*firstLetters)[i] == 'p' || (*firstLetters)[i] == 'c'){
+            int lastBracket = indexLastBracket(i, *firstLetters);
+            (*instructions)[lastBracket] = "g" + to_string(i);
+            (*firstLetters)[lastBracket] = 'g';
+        }
+    }
+}
+
 int main()
 {
-    string inputString = "m1,p2,f1,p7,f44,},i1,w3,l2,},}";
+    string inputString = "m1,p2,f1,p7,f44,},i1,w3,l2,},},k,k,f";
+    //                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
     vector<string> instructions = splitInstructions(inputString);
     vector<char> firstLetters;
     stack<int> loopReps;
     for(int i = 0; i < instructions.size(); i++)
         firstLetters.push_back(instructions[i].at(0));
     
+    endBracketsToLoopGotos(&instructions, &firstLetters);
     int index = 0;  // index of current instruction being processed
     
+    for(int i = 0; i < instructions.size(); i++){
+        cout << "ins" << instructions[i] << endl;
+    }
+    
     while(index < instructions.size()){
+        cout << "instructions" << instructions[index] << endl;
+        cout << "index" << index << endl;
         switch(firstLetters[index]){
             case 'f':
                 cout << "Moving forward " << instructions[index].substr(1) << " feet" << endl;
+                break;
+            case 'k':
+                cout << "Moving forward until path blocked" << endl;
                 break;
             case 'b':
                 cout << "Moving backward" << instructions[index].substr(1) << " feet" << endl;
@@ -61,11 +83,6 @@ int main()
                 cout << "Moving to <insert location>" << endl;
                 break;
             case 'p':{
-                // repeat # times (starting iterations)
-                int lastBracketIndex = indexLastBracket(index, firstLetters);
-                instructions[lastBracketIndex] = "g" + to_string(index);
-                firstLetters[lastBracketIndex] = 'g';
-                
                 int reps = stoi(instructions[index].substr(1)); // original number of repeats
                 loopReps.push(reps);
                 instructions[index] = "x" + to_string(reps - 1);
@@ -82,8 +99,7 @@ int main()
                     instructions[index] = "x" + to_string(curReps - 1);
                 } 
                 }break;
-            case 'c':
-                break;
+            case 'c':   // while loop is just an if statement with "goto start" at end
             case 'i':{
                 int condition = stoi(instructions[index].substr(1));
                 bool eval = false;
@@ -95,7 +111,7 @@ int main()
                 }
                 
                 if(!eval){
-                    index = indexLastBracket(index, firstLetters);
+                    index = indexLastBracket(index, firstLetters); // if false, skip past block
                 }
                 }break;
             case 'w':
