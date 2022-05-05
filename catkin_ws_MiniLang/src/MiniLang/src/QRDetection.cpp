@@ -1,7 +1,14 @@
-#include "MiniLang/kinect.hpp"
-#include "MiniLang/util.h"
+#include <kinect.hpp>
+#include <util.h>
+#include <algorithm>
+#include <strings.h>
+#include <zbar.h>
+#include <vector>
+
 
 #include <chrono>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>  
 #include <opencv2/objdetect.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -10,6 +17,7 @@
 
 using namespace std;
 using namespace cv;
+using namespace zbar;
 
 // Constructor
 kinect::kinect( const uint32_t index )
@@ -86,7 +94,8 @@ string kinect::run()
         const int32_t key = cv::waitKey( delay );
         if( key == 'q' ){
             break;
-        } else if (s != NULL) {
+        }
+        else if (s != "") {
             return s;
         }
     }
@@ -146,7 +155,7 @@ inline void kinect::draw_mat()
 }
 
 // Show
-String kinect::show()
+string kinect::show()
 {
     // Show Color
     return show_mat();
@@ -166,27 +175,61 @@ void display(Mat &im, Mat &bbox)
 inline string kinect::show_mat()
 {
     if( mat.empty() ){
-        return;
+        return "";
     }
 
-    // Show Image
-    const cv::String window_name = cv::format( "color (kinect %d)", device_index );
-    cv::QRCodeDetector qrDecoder;
+    // Create zbar scanner
+    ImageScanner scanner;
 
-  Mat bbox, rectifiedImage;
+    // disable all
+    scanner.set_config(ZBAR_NONE, ZBAR_CFG_ENABLE, 0);
 
-  std::string data = qrDecoder.detectAndDecode(mat, bbox, rectifiedImage);
-  if(data.length()>0)
-  {
-    string s << "Decoded Data : " << data << endl;
+    // enable qr
+    scanner.set_config(ZBAR_QRCODE, ZBAR_CFG_ENABLE, 1);
 
-    display(mat, bbox);
-    rectifiedImage.convertTo(rectifiedImage, CV_8UC3);
-    imshow("Rectified QRCode", rectifiedImage);
+    // Convert image to grayscale
+    Mat imGray;
+    cvtColor(mat, imGray,CV_BGR2GRAY);
 
-    waitKey(0);
-    return s;
-  else
-    cout << "QR Code not detected" << endl;
-    return NULL;
+    // Wrap image data in a zbar image
+    Image image(mat.cols, mat.rows, "Y800", (uchar *)imGray.data, mat.cols * mat.rows);
+
+    scanner.scan(image);
+
+    for(Image::SymbolIterator symbol = image.symbol_begin(); symbol != image.symbol_end(); ++symbol) {
+
+        cout << "Data: " << symbol->get_data() << endl << endl;
+    
+    vector<Point> points;
+    vector<Point> hull;
+
+    // Obtain location
+    for(int i = 0; i< symbol->get_location_size(); i++)
+    {
+      points.push_back(Point(symbol->get_location_x(i),symbol->get_location_y(i)));
+    }
+
+
+    // If the points do not form a quad, find convex hull
+    if(points.size() > 4)
+      convexHull(points, hull);
+    else
+      hull = points;
+
+    // Number of points in the convex hull
+    int n = hull.size();
+
+    for(int j = 0; j < n; j++)
+    {
+      line(mat, hull[j], hull[ (j+1) % n], Scalar(255,0,0), 3);
+    }
+
+
+    // Display results
+    imshow("Results", mat);
+    return symbol->get_data();
+    }
+
+    imshow("Results", mat);
+    return "";
 }

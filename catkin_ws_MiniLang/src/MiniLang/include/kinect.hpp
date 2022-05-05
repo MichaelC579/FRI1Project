@@ -3,6 +3,9 @@
 
 #include <k4a/k4a.hpp>
 #include <opencv2/opencv.hpp>
+#include <strings.h>
+
+using namespace std;
 
 class kinect
 {
@@ -25,7 +28,7 @@ public:
     ~kinect();
 
     // Run
-    void run();
+    string run();
 
     // Update
     void update();
@@ -34,7 +37,7 @@ public:
     void draw();
 
     // Show
-    void show();
+    string show();
 
 private:
     // Initialize
@@ -56,7 +59,7 @@ private:
     void draw_mat();
 
     // Show Color
-    void show_mat();
+    string show_mat();
 };
 
 #endif // __KINECT__
