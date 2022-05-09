@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <stack>
+#include <unistd.h>
 
 using namespace std;
 
@@ -45,7 +46,7 @@ void endBracketsToLoopGotos(vector<string> *instructions, vector<char> *firstLet
 
 int main()
 {
-    string inputString = "m1,p2,f1,p7,f44,},i1,w3,},},k,f2";
+    string inputString = "w1,w2,w3,w10";//"m1,p2,f1,p7,f44,},i1,w3,},},k,f2";
     //                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
     vector<string> instructions = splitInstructions(inputString);
     vector<char> firstLetters;
@@ -112,6 +113,7 @@ int main()
                 }break;
             case 'w':
                 cout << "Waiting " << instructions[index].substr(1) << " seconds" << endl;
+                usleep(stoi(instructions[index].substr(1)) * 1000000);
                 break;
             case 's':
                 cout << "Saying something" << endl;
