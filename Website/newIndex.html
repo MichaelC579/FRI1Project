@@ -181,6 +181,20 @@
   <p style="display:inline">seconds:</p>
   <button class="button2" onclick="addWait($('#waitx').val())">Add</button>
   <br>
+  
+  <p style="display:inline">Make sound </p>
+  <select name="sounds" id="soundChoice">
+    <option value="1">"Hello"</option>
+    <option value="2">"Goodbye"</option>
+    <option value="3">"I am a BWIBot"</option>
+    <option value="4">"Have a nice day!"</option>
+    <option value="5">Bells</option>
+    <option value="6">Happy Alert</option>
+    <option value="7">Sad Alert</option>
+  </select>
+  <button class="button2" onclick="addSound()">Add</button>
+  <br>
+  
   <br>
   <p><b>Control Commands:</b></p>
   
@@ -292,6 +306,28 @@
         } else {
             alert("Error: waiting time in seconds must be between 0 and " + secLimit);
         }
+    }
+    
+    function addSound(){
+        var cond1 = document.getElementById("soundChoice").value;
+        if(cond1 == 1){
+            display.splice(curLine, 0, "Make sound \"Hello\"");
+        } else if(cond1 == 2){
+            display.splice(curLine, 0, "Make sound \"Goodbye\"");
+        } else if(cond1 == 3){
+            display.splice(curLine, 0, "Make sound \"I am a BWIBot\"");
+        } else if(cond1 == 4){
+            display.splice(curLine, 0, "Make sound \"Have a nice day!\"");
+        } else if(cond1 == 5){
+            display.splice(curLine, 0, "Make sound (Bells)");
+        } else if(cond1 == 6){
+            display.splice(curLine, 0, "Make sound (Happy Alert)");
+        } else if(cond1 == 7){
+            display.splice(curLine, 0, "Make sound (Sad Alert)");
+        }
+        code.splice(curLine, 0, "s"+cond1);
+        curLine++;
+        printLines(); 
     }
     
     // Control Commands
