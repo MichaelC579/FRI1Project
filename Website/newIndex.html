@@ -193,8 +193,8 @@
   <p style="display:inline">Repeat while </p>
   <select name="bools" id="rcondition">
     <option value="1">path blocked</option>
-    <option value="2">path not blocked </option>
-    <option value="3">thing1</option>
+    <option value="2">path not blocked</option>
+    <option value="3">50% chance occurs</option>
   </select>
   <p style="display:inline">{ }:</p>
   <button class="button2" onclick="addRepeatW()">Add</button>
@@ -203,8 +203,8 @@
   <p style="display:inline">If </p>
   <select name="bools" id="icondition">
     <option value="1">path blocked</option>
-    <option value="2">thing</option>
-    <option value="3">thing2</option>
+    <option value="2">path not blocked</option>
+    <option value="3">50% chance occurs</option>
   </select>
   <p style="display:inline">{ }:</p>
   <button class="button2" onclick="addIf()">Add</button>
@@ -321,7 +321,7 @@
             display.splice(curLine, 0, "Repeat while (path not blocked) {"); // block start
         } 
         else if(cond1 == 3){
-            display.splice(curLine, 0, "Repeat while (some other condition) {"); // block start
+            display.splice(curLine, 0, "Repeat while (50% chance occurs) {"); // block start
         }
         code.splice(curLine, 0, "pw"+cond1);
         curLine++;
@@ -338,8 +338,10 @@
             // collision
             display.splice(curLine, 0, "If (path blocked) {"); // block start
             
-        } else if(cond1 == 2 || cond1 == 3){
-            display.splice(curLine, 0, "If (some other condition) {"); // block start
+        } else if(cond1 == 2){
+            display.splice(curLine, 0, "If (path not blocked) {"); // block start
+        } else if(cond1 == 3){
+            display.splice(curLine, 0, "If (50% chance occurs) {"); // block start
         }
         code.splice(curLine, 0, "i"+cond1);
         curLine++;
@@ -482,11 +484,12 @@
     }
     printLines(); // prints the initial blank line 1
     </script>
-    <br><br>
-    <p>&nbsp;&nbsp;Welcome to the BWIBot Coding Space!</p>
-  <p>&nbsp;&nbsp;Here you can write simple programs for the BWIBot in three easy steps:</p>
-  <p>&nbsp;&nbsp;1. Type your program by clicking the various command buttons."</p>
-  <p>&nbsp;&nbsp;2. Hit "Generate QR Code" to turn your program into a QR Code.</p>
-  <p>&nbsp;&nbsp;3. Hold your QR code up to BWIBot camera and watch your program run!</p>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+      <p style="border:2px; border-style:solid; border-color:gray; padding: 1em; font-family: georgia,garamond,serif; font-size:16px;">
+      <u>Welcome to the BWIBot Coding Space!</u><br>
+      Here you can write simple programs for the BWIBot in three easy steps:<br>
+      1. Type your program by clicking the various command buttons.<br>
+      2. Hit "Generate QR Code" to turn your program into a QR Code.<br>
+      3. Hold your QR code up to BWIBot camera and watch your program run!</p>
 </body>
 </html>
