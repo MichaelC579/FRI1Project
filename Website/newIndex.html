@@ -152,9 +152,12 @@
   
   <p><b>Commands:</b></p>
   
-  <p style="display:inline">Move forward </p>
+   <p style="display:inline">Move forward </p>
   <input type="number" id="movforx" name="fname" value="1" style="width: 50px; height:22px;">
-  <p style="display:inline">feet:</p>
+  <select name="bools" id="funit">
+    <option value="1">feet</option>
+    <option value="2">inches</option>
+  </select>
   <button class="button2" onclick="addMoveF($('#movforx').val())">Add</button>
   <br>
   
@@ -164,7 +167,10 @@
   
   <p style="display:inline">Move backward </p>
   <input type="number" id="movbacx" name="fname" value="1" style="width: 50px; height:22px;">
-  <p style="display:inline">feet:</p>
+  <select name="bools" id="bunit">
+    <option value="1">feet</option>
+    <option value="2">inches</option>
+  </select>
   <button class="button2" onclick="addMoveB($('#movbacx').val())">Add</button>
   <br>
   
@@ -174,6 +180,12 @@
   
   <p style="display:inline">Turn right: </p>
   <button class="button2" onclick="addTurnR()">Add</button>
+  <br>
+  
+  <p style="display:inline">Turn </p>
+  <input type="number" id="turnx" name="fname" value="1" style="width: 50px; height:22px;">
+  <p style="display:inline">degrees:</p>
+  <button class="button2" onclick="addTurnx($('#turnx').val())">Add</button>
   <br>
   
   <p style="display:inline">Wait </p>
@@ -255,15 +267,29 @@
     
     // adding commands
     
-    function addMoveF(feet) {
-        if(feet > 0 && feet < feetLimit){
-            display.splice(curLine, 0, "Move forward "+feet+" feet");
-            code.splice(curLine, 0, "f"+feet);
+        function addMoveF(feet) {
+    	var cond1 = document.getElementById("funit").value;
+        if(cond1 == 1) {
+        	if(feet > 0 && feet < feetLimit){
+              display.splice(curLine, 0, "Move forward "+feet+" feet");
+              code.splice(curLine, 0, "f"+feet+"f");
+              curLine++;
+              printLines(); 
+        	} else {
+            alert("Error: distance in feet must be between 0 and " + feetLimit);
+        	}
+        }
+        else {
+        	if(feet > 0 && feet < inchLimit){
+            display.splice(curLine, 0, "Move forward "+feet+" inches");
+            code.splice(curLine, 0, "f"+feet+"i");
             curLine++;
             printLines(); 
-        } else {
-            alert("Error: distance in feet must be between 0 and " + feetLimit);
-        }
+            }
+            else {
+            alert("Error: distance in inches must be between 0 and " + inchLimit);
+          			}
+      }
     }
     
     function addMoveFB() {
@@ -274,14 +300,28 @@
     }
     
     function addMoveB(feet) {
-        if(feet > 0 && feet < feetLimit){
-            display.splice(curLine, 0, "Move backward "+feet+" feet");
-            code.splice(curLine, 0, "b"+feet);
+    	var cond1 = document.getElementById("bunit").value;
+        if(cond1 == 1) {
+        	if(feet > 0 && feet < feetLimit){
+              display.splice(curLine, 0, "Move backwards "+feet+" feet");
+              code.splice(curLine, 0, "b"+feet+"f");
+              curLine++;
+              printLines(); 
+        	} else {
+            alert("Error: distance in feet must be between 0 and " + feetLimit);
+        	}
+        }
+        else {
+        	if(feet > 0 && feet < inchLimit){
+            display.splice(curLine, 0, "Move backwards "+feet+" inches");
+            code.splice(curLine, 0, "b"+feet+"i");
             curLine++;
             printLines(); 
-        } else {
-            alert("Error: distance in feet must be between 0 and " + feetLimit);
-        }
+            }
+            else {
+            alert("Error: distance in inches must be between 0 and " + inchLimit);
+          			}
+      }
     }
     function addTurnR() {
         display.splice(curLine, 0, "Turn Right");
@@ -295,6 +335,13 @@
         code.splice(curLine, 0, "l");
         curLine++;
         printLines();
+    }
+    
+    function addTurnx(degrees) {
+            display.splice(curLine, 0, "Turn " +degrees+ " degrees");
+            code.splice(curLine, 0, "r"+degrees);
+            curLine++;
+            printLines(); 
     }
     
     function addWait(seconds){
