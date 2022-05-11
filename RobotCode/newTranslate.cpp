@@ -87,6 +87,7 @@ void Translate::runProgram()
     
     int index = 0;  // index of current instruction being processed
     double distance; 
+    int unit; // 1 for feet, 0 for inches
     double degrees;
     bool pathBlocked = false;
 
@@ -94,9 +95,18 @@ void Translate::runProgram()
     while(index < instructions.size()){
         switch(firstLetters[index]){
             case 'f':
-                distance = std::stod(instructions[index].substr(1));
-                cout << "Moving forward " << distance << " feet" << endl;
-                pathBlocked = mover.move(distance, true);
+                distance = std::stod(instructions[index].substr(1, instructions[index].length() - 2));
+                cout << "Moving forward " << distance;
+                if(instructions[index].at(instructions[index].length() - 1) == 'f'){
+                    // feet
+                    unit = 1;
+                    cout << " feet" << endl;
+                } else {
+                    // inches
+                    unit = 0;
+                    cout << " inches" << endl;
+                }
+                pathBlocked = mover.move(distance, unit);
                 usleep(500000);
                 break;
             case 'k':
@@ -114,8 +124,16 @@ void Translate::runProgram()
                 usleep(500000);
                 break;
             case 'r':
-                cout << "Turning right" << endl;
-                mover.rotate(270);
+                if(instructions[index].length() == 1){
+                    // default right 90 degrees
+                    cout << "Turning right" << endl;
+                    mover.rotate(270);
+                } else {
+                    // specific degrees
+                    degrees = std::stod(instructions[index].substr(1));
+                    cout << "Turning " << degrees << " degrees" << endl;
+                    mover.rotate(360 - degrees);
+                }
                 usleep(500000);
                 break;
             case 'm':
